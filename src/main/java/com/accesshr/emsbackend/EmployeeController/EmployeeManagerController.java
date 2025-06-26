@@ -138,10 +138,7 @@ public class EmployeeManagerController {
             @RequestParam("lastName") String lastName,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
-            @RequestParam("task") boolean task,
-            @RequestParam("timeSheet") boolean timeSheet,
-            @RequestParam("organizationChart") boolean organizationChart,
-            @RequestParam("leaveManagement") boolean leaveManagement,@PathVariable String company) {
+            @PathVariable String company) {
 
         EmployeeManagerDTO employeeManagerDTO = new EmployeeManagerDTO();
         employeeManagerDTO.setFirstName(firstName);
@@ -149,10 +146,10 @@ public class EmployeeManagerController {
         employeeManagerDTO.setEmail(email);
         employeeManagerDTO.setCorporateEmail(email); // Set corporate email to the same email for registration
         employeeManagerDTO.setRole("admin"); // Default role for admin
-        employeeManagerDTO.setOrganizationChart(organizationChart);
-        employeeManagerDTO.setTask(task);
-        employeeManagerDTO.setLeaveManagement(leaveManagement);
-        employeeManagerDTO.setTimeSheet(timeSheet);
+        employeeManagerDTO.setOrganizationChart(true);
+        employeeManagerDTO.setTask(true);
+        employeeManagerDTO.setLeaveManagement(true);
+        employeeManagerDTO.setTimeSheet(true);
         employeeManagerDTO.setPassword(password); // Set plain text password
 
         ClientDetails clientDetails=new ClientDetails();

@@ -8,6 +8,7 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator;
 import org.springframework.stereotype.Service;
+
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Arrays;
@@ -54,18 +55,25 @@ public class TenantSchemaService {
         try (Connection connection = dataSource.getConnection();
              Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE SCHEMA IF NOT EXISTS `" + schemaName + "`");
-        }catch (SQLException e) {
-            throw new SQLException("Schema not created"+e.getMessage());
+        } catch (SQLException e) {
+            throw new SQLException("Schema not created" + e.getMessage());
         }
     }
 
     private void createTablesInSchema(String schemaName) {
+        String jdbcUrl = String.format(
+                "jdbc:mysql://google/%s" +
+                        "?cloudSqlInstance=java-backend-460409:us-central1:multitenant-db" +
+                        "&socketFactory=com.google.cloud.sql.mysql.SocketFactory" +
+                        "&useSSL=false&createDatabaseIfNotExist=true",
+                schemaName
+        );
         // Hibernate properties for the new schema
         Map<String, Object> settings = new HashMap<>();
         settings.put("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
-        settings.put("hibernate.connection.url", "jdbc:mysql://talent-flow-server-db-server.mysql.database.azure.com:3306/" + schemaName);
-        settings.put("hibernate.connection.username", "mtl");
-        settings.put("hibernate.connection.password", "mtl@123456");
+        settings.put("hibernate.connection.url", jdbcUrl);
+        settings.put("hibernate.connection.username", "root");
+        settings.put("hibernate.connection.password", "Dhanush@123456");
         settings.put("hibernate.hbm2ddl.auto", "create");
 
         // Build service registry
@@ -76,7 +84,7 @@ public class TenantSchemaService {
         // Register entity classes
         MetadataSources metadataSources = new MetadataSources(serviceRegistry);
 
-        List<Class<?>> entityClasses= Arrays.asList(
+        List<Class<?>> entityClasses = Arrays.asList(
                 Timesheet.class,
                 Task.class,
                 CompanyNews.class,
